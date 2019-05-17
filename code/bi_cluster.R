@@ -86,24 +86,26 @@ for (i in 1:num_sim) {
 }
 
 df <- data.frame(#flash = flash_error,
-                 flash2 = flash_v2_error,
-                 flash_backfit = flash_backfit_error,
-                 PMD = PMD_error,
-                 #                 PMD2 = PMD2_error,
-                 SSVD = SSVD_error)#,
+  EBMF_PN = flash_v2_error,
+  EBMF_backfit = flash_backfit_error,
+  PMD = PMD_error,
+  #                 PMD2 = PMD2_error,
+  SSVD = SSVD_error)#,
 #SVD = SVD_error)
 long <- melt(df)
-write.csv(long, "output/csv_files/bi_cluster.csv")
+names(long) <- c("Method", "value")
 
 bi_cluster <- ggplot(data = long) + 
-  geom_boxplot(aes(y = value, color = variable)) + scale_y_sqrt()
+  geom_boxplot(aes(y = value, color = Method)) + 
+  scale_y_sqrt() + 
+  ylab("RRMSE") + mytheme
 ggsave(filename = "bi_cluster.png", path = "output/figures", plot =bi_cluster, height = 5, width = 5)
 
-pp1<-plot_matrix(LF)
-pp2<-plot_matrix(flash_get_lf(flash_v2_out))
-pp3<-plot_matrix(flash_get_lf(flash_backfit_out))
-pp4<-plot_matrix(PMD_out$u  %*% t(PMD_out$v))
-pp5<-plot_matrix(SSVD_out$u  %*% t(SSVD_out$v))
+pp1<-plot_matrix(LF, title = "EBMF_PN")
+pp2<-plot_matrix(flash_get_lf(flash_v2_out), title = "EBMF_PN")
+pp3<-plot_matrix(abs(flash_get_lf(flash_backfit_out)), title = "EBMF_backfit")
+pp4<-plot_matrix(abs(PMD_out$u  %*% t(PMD_out$v)), title = "PMD")
+pp5<-plot_matrix(abs(SSVD_out$u  %*% t(SSVD_out$v)), title = "SSVD")
 
 ggsave(filename = "pp1_bi_cluster.png", path = "output/figures", plot =pp1, height = 5, width = 5)
 ggsave(filename = "pp2_bi_cluster.png", path = "output/figures", plot =pp1, height = 5, width = 5)

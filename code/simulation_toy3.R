@@ -96,20 +96,27 @@ for (i in 1:num_sim) {
 }
 
 df <- data.frame(#flash = flash_error,
-  flash2 = flash_v2_error,
-  flash_backfit = flash_backfit_error,
+  EBMF_PN = flash_v2_error,
+  EBMF_backfit = flash_backfit_error,
   PMD = PMD_error,
   #                 PMD2 = PMD2_error,
   SSVD = SSVD_error)#,
 #SVD = SVD_error)
 long <- melt(df)
-write.csv(long, "output/csv_files/toy3.csv")
+names(long) <- c("Method", "value")
 
 toy3 <- ggplot(data = long) + 
-  geom_boxplot(aes(y = value, color = variable)) + scale_y_sqrt()
+  geom_boxplot(aes(y = value, color = Method)) + 
+  scale_y_sqrt() + ylab("RRMSE") + 
+  mytheme
+
 ggsave(filename = "toy3.png", path = "output/figures", plot = toy3, height = 5, width = 5)
 
 
+
+
+figure1 <- ggarrange(toy3, toy1, toy2, ncol = 3, nrow = 1, common.legend = TRUE, legend = "bottom")
+ggsave(filename = "figure1.png", path = "output/figures", plot = figure1, height = 5, width = 15)
 
 # potentially useful plots
 figure_LF <- plot_matrix(LF)

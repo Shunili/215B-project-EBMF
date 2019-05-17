@@ -11,7 +11,7 @@ f_greedy_bf <- flash_backfit(data,f_greedy)
 saveRDS(f_greedy, file = "output/gflashvarcol.rds")
 saveRDS(f_greedy_bf, file = "output/bflashvarcol.rds")
 
-b_flash = readRDS("output/gflashvarcol.rds")
+b_flash = readRDS("output/bflashvarcol.rds")
 #load("output/GTExdata/gtexEQTL_zscore.rds")
 ssY = sum(zscore^2)
 K = dim(b_flash$EL)[2] -1
@@ -19,14 +19,14 @@ pve = (sapply(seq(1,K),function(x){ sum(b_flash$EL[,x]^2 %*% t(b_flash$EF[,x]^2)
 pve = pmax(round(pve,3),0.001)
 dat = read.table('data/GTExColors.txt', sep = '\t', comment.char = '')
 colordata = dat[c(1:6,9:18,21:23,26:30,32,33,35,36,38:53),1:2]
-L = b_flash$EL[,1:14]
+L = b_flash$EL[,1:10]
 library(reshape2)
 data_L = melt(L)
 colnames(data_L) = c("tissue","loading","value")
 library(ggplot2)
 tissue_color = as.character(colordata[,2])
 data_L$tissue = factor(data_L$tissue,levels = 1:44 ,labels = as.character(colordata[,1]) )
-data_L$loading = factor(data_L$loading,levels = 1:14 ,labels = paste("Factor",1:14,"; pve:", pve[1:14]))
+data_L$loading = factor(data_L$loading,levels = 1:10 ,labels = paste("Factor",1:10,"; pve:", pve[1:10]))
 ggplot(data_L,aes(x = tissue,y = value,fill = factor(tissue) )) +
   geom_bar(stat = "identity",width = 0.6) +
   scale_fill_manual(values=tissue_color) +
@@ -38,14 +38,14 @@ ggplot(data_L,aes(x = tissue,y = value,fill = factor(tissue) )) +
   guides(fill = guide_legend(ncol = 1, keyheight = 0.8, keywidth = 0.3))
 ggsave("flashrGTEx1.png", path = "output/figures", width = 8, height = 11)
 # the 27th factor is zero
-L = b_flash$EL[,15:26]
+L = b_flash$EL[,11:18]
 library(reshape2)
 data_L = melt(L)
 colnames(data_L) = c("tissue","loading","value")
 library(ggplot2)
 tissue_color = as.character(colordata[,2])
 data_L$tissue = factor(data_L$tissue,levels = 1:44 ,labels = as.character(colordata[,1]) )
-data_L$loading = factor(data_L$loading,levels = 1:12 ,labels = paste("Factor",15:26,"; pve:", pve[15:26]))
+data_L$loading = factor(data_L$loading,levels = 1:8 ,labels = paste("Factor",11:18,"; pve:", pve[11:18]))
 ggplot(data_L,aes(x = tissue,y = value,fill = factor(tissue) )) +
   geom_bar(stat = "identity",width = 0.6) +
   scale_fill_manual(values=tissue_color) +
@@ -55,4 +55,4 @@ ggplot(data_L,aes(x = tissue,y = value,fill = factor(tissue) )) +
   labs(title = "GTEx data", y = "factor values" ,x = "tissues", fill="tissue") +
   facet_wrap(~loading, ncol = 2, scales = "free_y") +
   guides(fill = guide_legend(ncol = 1, keyheight = 0.8, keywidth = 0.3))
-ggsave("flashrGTEx2.pdf", path = "output/figures", width = 8, height = 10)
+ggsave("flashrGTEx2.png", path = "output/figures", width = 8, height = 10)
